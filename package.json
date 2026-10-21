@@ -1,0 +1,15 @@
+{
+  "name": "parathi-public-complaint-portal",
+  "version": "2.0.0",
+  "description": "PARATHI public complaint management portal - Node.js 24 compatible DBMS college project",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "dev": "node server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "sql.js": "^1.13.0"
+  }
+}

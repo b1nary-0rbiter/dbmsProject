@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PARATHI - Public Complaint Portal</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div>
+      <h1 style="cursor:pointer;" onclick="showHome()">PARATHI</h1>
+      <div class="sub">Public Complaint Management System — Municipality</div>
+    </div>
+    <nav id="nav">
+      <span id="sessionName"></span>
+      <button id="navProfile" class="hidden btn-ghost" onclick="showProfile()">Profile</button>
+      <button id="navLogin" onclick="showScreen('auth')">Login</button>
+      <button id="navLogout" class="hidden btn-ghost" onclick="logout()">Logout</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <!-- Home / Landing -->
+    <div id="screen-home">
+      <div style="text-align:center;padding:40px 20px 20px;">
+        <h1 style="font-size:48px;font-weight:800;color:#1a3a5c;letter-spacing:2px;margin-bottom:8px;">PARATHI</h1>
+        <p style="font-size:16px;color:#555;margin-bottom:4px;">Public Complaint Management System</p>
+        <p style="font-size:13px;color:#888;">Municipality — Kottayam District</p>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <h2 style="border:none;padding:0;margin-bottom:16px;">Complaint Statistics</h2>
+        <p style="font-size:13px;color:#666;margin-bottom:16px;">Overview of complaints handled across all departments</p>
+        <div class="stats-row" id="homeStats"></div>
+        <div style="margin-top:16px;">
+          <div style="font-size:12px;color:#888;margin-bottom:8px;">Resolved by Department</div>
+          <div id="deptStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;"></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="btn btn-primary" onclick="showScreen('auth')" style="padding:10px 24px;font-size:15px;">Login / Register</button>
+        <p style="font-size:12px;color:#888;margin-top:8px;">Citizens and officers can log in to submit or manage complaints</p>
+      </div>
+    </div>
+
+    <!-- Auth -->
+    <div id="screen-auth">
+      <div class="card" style="max-width:520px;margin:0 auto;">
+        <h2 id="authTitle">Login</h2>
+        <div id="authMsg" class="msg hidden"></div>
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button id="tabLogin" class="btn btn-sm btn-primary" onclick="setAuth('login')">Login</button>
+          <button id="tabRegister" class="btn btn-sm btn-secondary" onclick="setAuth('register')">Register</button>
+        </div>
+        <form id="authForm">
+          <div id="regFields" class="hidden">
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Full Name</label>
+              <input id="regName" name="full_name" placeholder="Your full name">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Phone</label>
+              <input id="regPhone" name="phone" placeholder="Phone number" maxlength="10" pattern="[0-9]{10}" title="Enter 10 digit phone number">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Email</label>
+            <input id="email" name="email" type="email" required placeholder="your@email.com">
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Password</label>
+            <input id="password" name="password" type="password" required placeholder="Password">
+          </div>
+          <button type="submit" id="authBtn" class="btn btn-primary">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Citizen -->
+    <div id="screen-citizen" class="hidden">
+      <div class="card">
+        <h2>Welcome, <span id="citizenName"></span></h2>
+        <div class="stats-row" id="citizenStats"></div>
+        <div class="mt-12">
+          <button class="btn btn-primary" onclick="showSubmit()">New Complaint</button>
+        </div>
+        <h3>My Complaints</h3>
+        <div id="citizenList"></div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div id="screen-submit" class="hidden">
+      <div class="card">
+        <h2>Submit Complaint</h2>
+        <form id="complaintForm">
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Subject</label>
+              <input name="subject" required placeholder="Brief subject">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Priority</label>
+              <select name="priority">
+                <option>Normal</option><option>High</option><option>Urgent</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Description</label>
+            <textarea name="description" required placeholder="Describe your complaint"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Location</label>
+              <input name="location_text" required placeholder="Area / ward / landmark">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Office</label>
+              <select name="office_id" id="officeSelect" required></select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Attachment (optional)</label>
+            <input name="attachment" type="file">
+          </div>
+          <div class="mt-12">
+            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" onclick="showScreen('citizen')">Cancel</button>
+          </div>
+        </form>
+        <div id="submitMsg" class="msg hidden"></div>
+      </div>
+    </div>
+
+    <!-- Officer -->
+    <div id="screen-office" class="hidden">
+      <div class="card">
+        <h2 id="officeTitle">Office Dashboard</h2>
+        <div class="stats-row" id="officeStats"></div>
+        <h3>Assigned Complaints</h3>
+        <div id="officeList"></div>
+        <div style="margin-top:16px;padding:12px;background:#f0f2f5;border:1px solid #ddd;border-radius:4px;">
+          <div style="font-size:13px;font-weight:600;color:#1a3a5c;margin-bottom:6px;">Priority Breakdown</div>
+          <div id="priorityBreakdown" style="display:flex;gap:16px;font-size:13px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail -->
+    <div id="screen-detail" class="hidden">
+      <div class="card">
+        <h2 id="detailTitle"></h2>
+        <div id="detailContent"></div>
+      </div>
+    </div>
+
+    <!-- Profile screen -->
+    <div id="screen-profile" class="hidden">
+      <div class="card" style="max-width:480px;margin:0 auto;">
+        <h2>My Profile</h2>
+        <div id="profileContent"></div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-secondary" onclick="goBack()">&#8592; Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info page (modal-style, inline) -->
+    <div id="screen-info" class="hidden">
+      <div class="card">
+        <div style="margin-bottom:12px;">
+          <button class="btn btn-secondary" onclick="goBack()">&#8592; Back</button>
+        </div>
+        <div id="infoContent"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#" onclick="showInfo('about');return false;">About Us</a>
+      <a href="#" onclick="showInfo('services');return false;">Services</a>
+      <a href="#" onclick="showInfo('privacy');return false;">Privacy Policy</a>
+      <a href="#" onclick="showInfo('terms');return false;">Terms of Use</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>Municipality Office</p>
+      <p>Kottayam District</p>
+      <p>Email: grievance@parathi</p>
+      <p>Helpline: 1800-000-0000</p>
+    </div>
+    <div class="footer-col">
+      <h4>Information</h4>
+      <a href="#" onclick="showInfo('accessibility');return false;">Accessibility</a>
+      <a href="#" onclick="showInfo('sitemap');return false;">Sitemap</a>
+      <a href="#" onclick="showInfo('help');return false;">Help</a>
+      <a href="#" onclick="showInfo('contact');return false;">Contact Us</a>
+    </div>
+    <div class="copyright">
+      &copy; 2026 Municipality. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

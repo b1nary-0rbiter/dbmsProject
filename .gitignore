@@ -1,0 +1,6 @@
+node_modules/
+parathi.db
+uploads/*
+!uploads/.gitkeep
+npm-debug.log*
+credentials.txt
